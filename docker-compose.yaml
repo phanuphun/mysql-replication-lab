@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  mysql-primary:
+    image: mysql:8.0
+    container_name: mysql-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    command: [
+      "mysqld",
+      "--server-id=1",
+      "--log-bin=binlog",
+      "--binlog-format=ROW",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON",
+      "--log-replica-updates=ON"
+    ]
+    volumes:
+      - ./init/00-init-primary.sql:/docker-entrypoint-initdb.d/00-init-primary.sql:ro
+    networks: [replnet]
+
+  mysql-replica:
+    image: mysql:8.0
+    container_name: mysql-replica
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3308:3306"
+    command: [
+      "mysqld",
+      "--server-id=2",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON",
+      # "--read-only=ON",
+      # "--super-read-only=ON"
+    ]
+    volumes:
+      - ./init/00-init-replica.sql:/docker-entrypoint-initdb.d/00-init-replica.sql:ro
+    depends_on: [mysql-primary]
+    networks: [replnet]
+
+networks:
+  replnet:
+    driver: bridge
