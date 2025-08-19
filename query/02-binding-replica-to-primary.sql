@@ -1,5 +1,5 @@
 -- เชื่อม replica db (primary) เข้ากับ primary db (master)
-
+-- 
 STOP REPLICA;
 RESET REPLICA ALL;
 CHANGE REPLICATION SOURCE TO
