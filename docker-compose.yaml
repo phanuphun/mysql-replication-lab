@@ -58,6 +58,26 @@ services:
     depends_on: [mysql-replica]   # ให้ donor (replica1) ขึ้นก่อน
     networks: [replnet]
 
+  # สำหรับ clone primary (Donor)
+  mysql-replica-3: 
+    image: mysql:8.0
+    container_name: mysql-replica-3
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3310:3306"
+    command: [
+      "mysqld",
+      "--server-id=4",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON"
+    ]
+    restart: unless-stopped 
+    volumes:
+      - ./init/00-init-replica-3.sql:/docker-entrypoint-initdb.d/00-init-replica-3.sql:ro
+    depends_on: [mysql-replica]   # ให้ donor (replica1) ขึ้นก่อน
+    networks: [replnet]
+
 networks:
   replnet:
     driver: bridge

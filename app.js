@@ -1,9 +1,22 @@
 import 'dotenv/config';
 import express from 'express';
 import mysql from 'mysql2/promise';
+import knex from 'knex';
+import { faker } from '@faker-js/faker';
 
 const app = express();
 app.use(express.json());
+
+const primaryKnex = knex({
+    client: 'mysql2',
+    connection: {
+        host: process.env.DB_WRITE_HOST,
+        port: +process.env.DB_WRITE_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME
+    }
+});
 
 const writePool = mysql.createPool({
     host: process.env.DB_WRITE_HOST,
@@ -93,6 +106,26 @@ app.get('/lag', async (_req, res) => {
         res.status(500).json({ error: String(e) });
     }
 });
+
+app.get('/user/random/:number', async (req, res) => {
+    const { number } = req.params;
+    if (!number || isNaN(number)) {
+        return res.status(400).json({ error: 'Valid number is required' });
+    }
+
+    for (let i = 0; i < +number; i++) {
+        const fakerName = faker.person.fullName();
+        console.log(fakerName)
+        await primaryKnex('users').insert({ name: fakerName })
+        // insertedIds.push(r.id);
+    }
+
+    return res.json({
+        ok: 1
+    });
+
+});
+
 
 const port = +process.env.PORT || 3000;
 app.listen(port, () => console.log(`App listening on http://localhost:${port}`));
