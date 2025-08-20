@@ -1,0 +1,27 @@
+{
+  "name": "mysql-primary-replica-lab",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phanuphun/mysql-replication-lab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phanuphun/mysql-replication-lab/issues"
+  },
+  "homepage": "https://github.com/phanuphun/mysql-replication-lab#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.3",
+    "nodemon": "^3.1.10"
+  }
+}

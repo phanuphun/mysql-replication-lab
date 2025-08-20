@@ -1,0 +1,1 @@
+CLONE INSTANCE FROM 'clone_user'@'mysql-replica':3306 IDENTIFIED BY 'ClonePass!';

@@ -32,12 +32,30 @@ services:
       "--server-id=2",
       "--gtid-mode=ON",
       "--enforce-gtid-consistency=ON",
-      # "--read-only=ON",
-      # "--super-read-only=ON"
     ]
     volumes:
       - ./init/00-init-replica.sql:/docker-entrypoint-initdb.d/00-init-replica.sql:ro
     depends_on: [mysql-primary]
+    networks: [replnet]
+
+  # สำหรับ clone (Donor)
+  mysql-replica-2: 
+    image: mysql:8.0
+    container_name: mysql-replica-2
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3309:3306"
+    command: [
+      "mysqld",
+      "--server-id=3",
+      "--gtid-mode=ON",
+      "--enforce-gtid-consistency=ON"
+    ]
+    restart: unless-stopped 
+    volumes:
+      - ./init/00-init-replica-2.sql:/docker-entrypoint-initdb.d/00-init-replica-2.sql:ro
+    depends_on: [mysql-replica]   # ให้ donor (replica1) ขึ้นก่อน
     networks: [replnet]
 
 networks:
